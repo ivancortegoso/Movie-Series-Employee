@@ -8,17 +8,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,7 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Setter
 @Entity
-public class Employee implements UserDetails {
+public class Employee extends EntityParent implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,17 +46,18 @@ public class Employee implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "proposer")
+    @OneToMany(mappedBy = "proposer")
     private Set<Series> seriesProposed;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "proposer")
+    @OneToMany(mappedBy = "proposer")
     private Set<Movie> moviesProposed;
 
     private boolean enabled = true;
 
     private boolean tokenExpired = false;
+
+    @OneToMany(mappedBy = "id2", fetch = FetchType.LAZY)
+    private List<MovieRatingEmployee> moviesRated = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -101,27 +93,6 @@ public class Employee implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
-    }
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (obj instanceof Employee && Objects.equals(((Employee) obj).id, this.id)) {
-            return true;
-        }
-
-        return false;
     }
 
 }

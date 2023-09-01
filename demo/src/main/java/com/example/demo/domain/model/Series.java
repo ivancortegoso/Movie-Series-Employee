@@ -1,5 +1,6 @@
 package com.example.demo.domain.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 import javax.persistence.Column;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Series {
+public class Series implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

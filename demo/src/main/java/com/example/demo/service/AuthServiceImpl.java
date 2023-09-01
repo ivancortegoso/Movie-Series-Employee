@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthServiceImpl implements IAuthService {
+public class AuthServiceImpl {
 
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -33,7 +33,6 @@ public class AuthServiceImpl implements IAuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @Override
     public String login(LoginDto loginDto) {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

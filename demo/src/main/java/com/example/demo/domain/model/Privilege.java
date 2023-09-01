@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
-public class Privilege {
+public class Privilege extends EntityParent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

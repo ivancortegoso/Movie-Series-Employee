@@ -8,7 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RoleService extends CommonService<Role, IRoleRepository>{
+public class RoleService extends CommonService<Role, IRoleRepository, Long>{
     @Transactional
     public Role createRoleIfNotFound(
             String name, Collection<Privilege> privileges) {

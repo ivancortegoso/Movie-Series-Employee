@@ -14,4 +14,6 @@ public interface IMovieRepository extends JpaRepository<Movie, Long>, JpaSpecifi
 
     Movie findFirstByOrderByRatingDesc();
 
+    Movie findByTitle(String title);
+
 }

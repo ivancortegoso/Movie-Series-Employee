@@ -1,18 +1,22 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.dto.request.SeriesRequest;
 import com.example.demo.domain.dto.response.SeriesResponse;
+import com.example.demo.domain.mapper.SeriesMapper;
 import com.example.demo.domain.model.Series;
 import com.example.demo.repository.ISeriesRepository;
 import com.example.demo.repository.specification.SearchCriteria;
 import com.example.demo.repository.specification.SeriesSpecification;
 import java.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SeriesService extends CommonService<Series, ISeriesRepository>{
-
+public class SeriesService extends CommonService<Series, ISeriesRepository, Long>{
+    @Autowired
+    SeriesMapper mapper;
     public Page<SeriesResponse> findSeriesByCriteria(Pageable pageable, Double rating, LocalDate before, LocalDate after) {
         Page<Series> series = repository.findAll(new SeriesSpecification(new SearchCriteria(rating, before, after)), pageable);
         return series.map(SeriesResponse::new);
@@ -39,5 +43,10 @@ public class SeriesService extends CommonService<Series, ISeriesRepository>{
     public Page<SeriesResponse> findAllByStatus(Pageable pageable, String status) {
         Page<Series> series = repository.findAllByStatus(pageable, status);
         return series.map(SeriesResponse::new);
+    }
+
+    public void updateSeries(Series series, SeriesRequest request) {
+        mapper.updateSeries(request, series);
+        repository.save(series);
     }
 }

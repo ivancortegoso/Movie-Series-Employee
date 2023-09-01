@@ -6,7 +6,7 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PrivilegeService extends CommonService<Privilege, IPrivilegeRepository>{
+public class PrivilegeService extends CommonService<Privilege, IPrivilegeRepository, Long>{
     @Transactional
     public Privilege createPrivilegeIfNotFound(String name) {
 

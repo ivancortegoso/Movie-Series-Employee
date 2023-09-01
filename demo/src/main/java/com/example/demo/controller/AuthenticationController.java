@@ -2,10 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.LoginDto;
 import com.example.demo.domain.dto.exception.ApiErrorException;
-import com.example.demo.domain.dto.request.CreateEmployeeRequest;
+import com.example.demo.domain.dto.request.EmployeeRequest;
 import com.example.demo.domain.dto.response.EmployeeResponse;
 import com.example.demo.domain.dto.response.JWTAuthResponse;
-import com.example.demo.domain.mapper.EmployeeMapper;
 import com.example.demo.service.AuthServiceImpl;
 import com.example.demo.service.EmployeeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,10 +24,7 @@ public class AuthenticationController {
     protected EmployeeService userService;
     @Autowired
     private AuthServiceImpl authService;
-    @Autowired
-    EmployeeMapper mapper;
 
-    // Build Login REST API
     @PostMapping("login")
     public ResponseEntity<JWTAuthResponse> authenticate(@RequestBody LoginDto loginDto){
         String token = authService.login(loginDto);
@@ -39,7 +35,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(jwtAuthResponse);
     }
     @PostMapping(path = "register")
-    public ResponseEntity<EmployeeResponse> register(@RequestBody CreateEmployeeRequest request) throws ApiErrorException {
+    public ResponseEntity<EmployeeResponse> register(@RequestBody EmployeeRequest request) throws ApiErrorException {
         if (userService.findByEmail(request.getEmail()) != null) {
             throw new ApiErrorException("Email already exists!");
         }

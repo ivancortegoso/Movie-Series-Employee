@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-public class CommonService<E, R extends JpaRepository<E, Long>> {
+public class CommonService<E, R extends JpaRepository<E, K>, K> {
     @Autowired
     protected R repository;
 
@@ -17,7 +17,7 @@ public class CommonService<E, R extends JpaRepository<E, Long>> {
     }
 
     @Transactional(readOnly = true)
-    public E findById(Long id) {
+    public E findById(K id) {
         return repository.findById(id).orElse(null);
     }
 
@@ -27,7 +27,7 @@ public class CommonService<E, R extends JpaRepository<E, Long>> {
     }
 
     @Transactional()
-    public void deleteById(Long id) {
+    public void deleteById(K id) {
         repository.deleteById(id);
     }
 

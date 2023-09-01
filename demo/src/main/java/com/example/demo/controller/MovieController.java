@@ -29,8 +29,8 @@ public class MovieController {
     @ResponseBody
     public ResponseEntity<Page<MovieResponse>> getAllMovies(@PageableDefault(size = 50) final Pageable pageable, @RequestParam(required = false) Double rating, @RequestParam(required = false) LocalDate before, @RequestParam(required = false) LocalDate after)
             throws ApiErrorException {
-        if (rating > 10 || rating < 0) throw new ApiErrorException("Rating must be between 0 and 10");
-        if (before.isAfter(after)) throw new ApiErrorException("Date before must be before Date after");
+        if (rating != null && (rating > 10 || rating < 0)) throw new ApiErrorException("Rating must be between 0 and 10");
+        if (before != null && after != null && before.isAfter(after)) throw new ApiErrorException("Date before must be before Date after");
         Page<MovieResponse> movies = movieService.findMoviesByCriteria(pageable, rating, before, after);
         return ResponseEntity.ok(movies);
     }

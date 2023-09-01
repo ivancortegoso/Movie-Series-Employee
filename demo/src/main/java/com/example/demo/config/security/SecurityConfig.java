@@ -22,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
@@ -46,12 +47,12 @@ public class SecurityConfig {
     @Bean
     public RoleHierarchy roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        String hierarchy = "ROLE_PREMIUM_USER > ROLE_USER";
+        String hierarchy = "ROLE_IMPLEMENTER > ROLE_EMPLOYEE";
         roleHierarchy.setHierarchy(hierarchy);
         return roleHierarchy;
     }
 
-    @Bean ("webSecurityExpressionHandlerSolera")
+    @Bean ("webSecurityExpressionHandlerDemo")
     public DefaultWebSecurityExpressionHandler webSecurityExpressionHandler() {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
         expressionHandler.setRoleHierarchy(roleHierarchy());
@@ -64,26 +65,23 @@ public class SecurityConfig {
                     authorize.requestMatchers(new AntPathRequestMatcher("/h2-console/**"))
                             .permitAll();
                     authorize.antMatchers("/api/public/**", "/error").permitAll();
-                    authorize.antMatchers("/api/bankaccount**/**")
-                            .hasRole("USER");
-                    authorize.antMatchers("/api/transaction/**")
-                            .hasRole("USER");
-                    authorize.antMatchers("/api/user**/**")
-                            .authenticated();
-                    authorize.antMatchers("/api/admin/**")
-                            .hasRole("ADMIN");
-                    authorize.antMatchers(AUTH_WHITELIST).permitAll();
-                }).addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                    authorize.antMatchers("/api/employee**/**").hasAnyRole("EMPLOYEE", "IMPLEMENTER");
+                    authorize.antMatchers("/api/movie**/**").hasAnyRole("EMPLOYEE", "IMPLEMENTER");
+                    authorize.antMatchers("/api/series**/**").hasAnyRole("EMPLOYEE", "IMPLEMENTER");
+                    authorize.antMatchers("/api/implementer/**").hasRole("IMPLEMENTER");
+                    authorize.antMatchers(AUTH_WHITELIST_SWAGGER).permitAll();
+                }).sessionManagement(e -> e.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http
                 .headers(headers -> headers.disable());
         return http.build();
     }
 
-    private static final String[] AUTH_WHITELIST = {
+    private static final String[] AUTH_WHITELIST_SWAGGER = {
             "/v3/api-docs/**",
             "/v3/api-docs.yaml",
             "/swagger-ui/**",
-            "/swagger-bankAPI.html"
+            "/swagger-demo-project.html"
     };
 
     private SecurityScheme createAPIKeyScheme() {
@@ -97,8 +95,8 @@ public class SecurityConfig {
                         addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes
                         ("Bearer Authentication", createAPIKeyScheme()))
-                .info(new Info().title("Bank API")
-                        .description("Bank functions.")
+                .info(new Info().title("Demo API")
+                        .description("Demo functions.")
                         .version("1.0").contact(new Contact().name("Ivan Cortegoso")
                                 .email( "ivancortegoso@hotmail.com"))
                         .license(new License().name("License of API")
